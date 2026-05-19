@@ -2750,6 +2750,7 @@ def plotSBS(
         ]
         colors_flat_list = [item for sublist in colorsall for item in sublist]
 
+        ymax = 0
         for sample in data.columns:
             buf.seek(0)
             figs[sample] = pickle.load(buf)
@@ -2757,7 +2758,6 @@ def plotSBS(
 
             total_count = np.sum(data[sample].values)
             x = 0.4
-            ymax = 0
             i = 0
             muts = data[sample].values
             if percentage:
@@ -2770,7 +2770,7 @@ def plotSBS(
                         align="center",
                         zorder=1000,
                     )
-                    ymax = np.max(muts / total_count * 100)
+                    ymax = max(ymax, np.max(muts / total_count * 100))
                 sig_probs = True
             else:
                 plt.bar(
@@ -2781,20 +2781,12 @@ def plotSBS(
                     align="center",
                     zorder=1000,
                 )
-                ymax = np.max(muts)
+                ymax = max(ymax, np.max(muts))
 
             x = 0.043
             y3 = 0.87
-            y = int(ymax * 1.25)
-            y2 = y + 2
 
-            if y <= 4:
-                y += 4
-
-            while y % 4 != 0:
-                y += 1
-
-            y = ymax / 1.025
+            y = round(ymax / 1.025)
             ytick_offest = float(y / 3)
 
             if percentage:
